@@ -4,16 +4,16 @@ import { JwtHelperService } from '@auth0/angular-jwt';
 import { environment } from '../../environments/environment';
 
 const JWTS_LOCAL_KEY = 'JWTS_LOCAL_KEY';
-const JWTS_ACTIVE_INDEX_KEY = 'JWTS_ACTIVE_INDEX_KEY';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  url = environment.auth0.url;
-  audience = environment.auth0.audience;
-  clientId = environment.auth0.clientId;
-  callbackURL = environment.auth0.callbackURL;
+  // Correctly get properties from the 'auth' object in environment.ts
+  domain = environment.auth.domain;
+  audience = environment.auth.audience;
+  clientId = environment.auth.clientId;
+  callbackURL = environment.auth.callbackURL;
 
   token: string;
   payload: any;
@@ -22,7 +22,7 @@ export class AuthService {
 
   build_login_link(callbackPath = '') {
     let link = 'https://';
-    link += this.url + '.auth0.com';
+    link += this.domain;
     link += '/authorize?';
     link += 'audience=' + this.audience + '&';
     link += 'response_type=token&';
@@ -31,15 +31,10 @@ export class AuthService {
     return link;
   }
 
-  // invoked in app.component on load
   check_token_fragment() {
-    // parse the fragment
     const fragment = window.location.hash.substr(1).split('&')[0].split('=');
-    // check if the fragment includes the access token
     if ( fragment[0] === 'access_token' ) {
-      // add the access token to the jwt
       this.token = fragment[1];
-      // save jwts to localstore
       this.set_jwt();
     }
   }
@@ -71,7 +66,14 @@ export class AuthService {
   logout() {
     this.token = '';
     this.payload = null;
-    this.set_jwt();
+    localStorage.removeItem(JWTS_LOCAL_KEY);
+
+    const logoutUrl = `https://` +
+                      `${this.domain}/v2/logout?` +
+                      `client_id=${this.clientId}&` +
+                      `returnTo=${encodeURIComponent('http://localhost:8100')}`;
+
+    window.location.href = logoutUrl;
   }
 
   can(permission: string) {

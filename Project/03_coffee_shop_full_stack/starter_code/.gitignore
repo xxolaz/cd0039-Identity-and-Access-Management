@@ -1,14 +1,28 @@
+# Python / Flask
 venv/
-.vscode/
+*.pyc
 __pycache__/
-test.db
+.env
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+*.sqlite3
+*.db
 
-# OS generated files #
-######################
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# Node.js / Ionic
+frontend/node_modules/
+frontend/www/
+frontend/platforms/
+frontend/plugins/
+frontend/resources/
+frontend/coverage/
+*.log
+
+# IDE / OS specific
+.vscode/
+.idea/
+*.DS_Store
